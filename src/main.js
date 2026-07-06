@@ -781,17 +781,12 @@ function bindSidebarControls() {
         state.zhenhaiTileset.show = true;
         showToast('✅ 镇海港区模型已显示');
 
-        // 飞到模型位置（从 tileset.json 的 region 计算中心点）
-        // region: [west, south, east, north, minHeight, maxHeight] (弧度)
-        const west = 2.0313438265278387;
-        const south = 0.6963729325104971;
-        const east = 2.0316928923782376;
-        const north = 0.696721998360896;
-        const centerLng = Cesium.Math.toDegrees((west + east) / 2);
-        const centerLat = Cesium.Math.toDegrees((south + north) / 2);
+        // 飞到镇海港区模型位置（坐标来自 tileset.json）
+        const ZHENHAI_LNG = 121.7321580707662;
+        const ZHENHAI_LAT = 29.97129941895685;
 
         viewer.camera.flyTo({
-          destination: Cesium.Cartesian3.fromDegrees(centerLng, centerLat, 2000),
+          destination: Cesium.Cartesian3.fromDegrees(ZHENHAI_LNG, ZHENHAI_LAT, 2000),
           orientation: {
             heading: Cesium.Math.toRadians(0),
             pitch: Cesium.Math.toRadians(-45),
