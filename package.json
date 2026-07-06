@@ -8,12 +8,14 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
+    "deploy": "vite build && gh-pages -d dist",
     "convert-obj": "npx obj2gltf -i public/models/BL_obj_001_1.obj -o public/models/BL_obj_001_1.glb",
     "convert-all": "node scripts/convert-all-obj.js",
     "fetch-sea": "node scripts/fetch-osm-water.js && node scripts/osm-to-sea-geojson.js",
     "fetch-port": "node scripts/fetch-osm-port-small.js && node scripts/osm-to-port-geojson.js"
   },
   "devDependencies": {
+    "gh-pages": "^6.3.0",
     "obj2gltf": "^3.2.0",
     "vite": "^6.0.0"
   },
