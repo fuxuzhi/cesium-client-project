@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cesium 三维地图工作台</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <!-- Cesium 样式 -->
+  <link rel="stylesheet" href="/Cesium/Widgets/widgets.css" />
+
+  <!-- 自定义样式 -->
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+  <!-- 顶部标题栏 -->
+  <header id="app-header">
+    <div class="header-left">
+      <span class="header-logo">🌐</span>
+      <h1>Cesium 三维地图工作台</h1>
+    </div>
+    <div class="header-right">
+      <span id="fps-counter" class="fps-badge">-- FPS</span>
+    </div>
+  </header>
+
+  <!-- 主内容区域 -->
+  <div id="app-main">
+    <!-- 左侧面板 -->
+    <aside id="sidebar">
+      <!-- 图层控制 -->
+      <section class="panel-section">
+        <h3 class="section-title">📂 图层控制</h3>
+        <div class="layer-list">
+          <label class="layer-item">
+            <input type="checkbox" id="chk-imagery" checked />
+            <span class="layer-color" style="background:#4fc3f7"></span>
+            <span class="layer-name">天地图影像</span>
+          </label>
+          <label class="layer-item">
+            <input type="checkbox" id="chk-annotation" checked />
+            <span class="layer-color" style="background:#81c784"></span>
+            <span class="layer-name">中文注记</span>
+          </label>
+          <label class="layer-item">
+            <input type="checkbox" id="chk-globe" checked />
+            <span class="layer-color" style="background:#ffb74d"></span>
+            <span class="layer-name">地球显示</span>
+          </label>
+          <label class="layer-item">
+            <input type="checkbox" id="chk-tianjin" checked />
+            <span class="layer-color" style="background:#4fc3f7"></span>
+            <span class="layer-name">天津边界</span>
+          </label>
+          <label class="layer-item">
+            <input type="checkbox" id="chk-model" checked />
+            <span class="layer-color" style="background:#ce93d8"></span>
+            <span class="layer-name">3D 模型 (5个)</span>
+          </label>
+          <label class="layer-item">
+            <input type="checkbox" id="chk-zhenhai" />
+            <span class="layer-color" style="background:#ff9800"></span>
+            <span class="layer-name">镇海港区模型</span>
+          </label>
+          <label class="layer-item">
+            <input type="checkbox" id="chk-water" />
+            <span class="layer-color" style="background:#0288d1"></span>
+            <span class="layer-name">北仑港区水面</span>
+          </label>
+          <div id="water-controls" class="water-controls hidden">
+            <div class="slider-group">
+              <label class="slider-label">
+                <span>透明度</span>
+                <span id="water-opacity-value">0.68</span>
+              </label>
+              <input type="range" id="water-opacity" min="0.05" max="1" step="0.01" value="0.68" />
+            </div>
+            <div class="slider-group">
+              <label class="slider-label">
+                <span>波纹频率</span>
+                <span id="water-frequency-value">1200</span>
+              </label>
+              <input type="range" id="water-frequency" min="200" max="3000" step="50" value="1200" />
+            </div>
+            <div class="slider-group">
+              <label class="slider-label">
+                <span>动画速度</span>
+                <span id="water-speed-value">0.012</span>
+              </label>
+              <input type="range" id="water-speed" min="0" max="0.05" step="0.001" value="0.012" />
+            </div>
+            <div class="slider-group">
+              <label class="slider-label">
+                <span>波纹幅度</span>
+                <span id="water-amplitude-value">3.0</span>
+              </label>
+              <input type="range" id="water-amplitude" min="0" max="15" step="0.5" value="3.0" />
+            </div>
+            <div class="slider-group">
+              <label class="slider-label">
+                <span>高光强度</span>
+                <span id="water-specular-value">0.35</span>
+              </label>
+              <input type="range" id="water-specular" min="0" max="1" step="0.05" value="0.35" />
+            </div>
+          </div>
+          <div class="model-color-legend">
+            <span class="legend-item"><span class="legend-color" style="background:#ff0000"></span>BL_obj_001_1</span>
+            <span class="legend-item"><span class="legend-color" style="background:#00ff00"></span>BL_obj_001_2</span>
+            <span class="legend-item"><span class="legend-color" style="background:#0000ff"></span>BL_obj_001_3</span>
+            <span class="legend-item"><span class="legend-color" style="background:#ffff00"></span>BL_obj_005_1</span>
+            <span class="legend-item"><span class="legend-color" style="background:#00ffff"></span>BL_obj_005_2</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- 显示调节 -->
+      <section class="panel-section">
+        <h3 class="section-title">🎨 显示调节</h3>
+        <div class="slider-group">
+          <label class="slider-label">
+            <span>亮度</span>
+            <span id="brightness-value">1.0</span>
+          </label>
+          <input type="range" id="slider-brightness" min="0" max="3" step="0.01" value="1.0" />
+        </div>
+        <div class="slider-group">
+          <label class="slider-label">
+            <span>对比度</span>
+            <span id="contrast-value">1.0</span>
+          </label>
+          <input type="range" id="slider-contrast" min="0" max="3" step="0.01" value="1.0" />
+        </div>
+
+        <!-- 模型参数调节 -->
+        <div class="model-controls-divider">📦 模型参数</div>
+        <div class="slider-group">
+          <label class="slider-label">
+            <span>航向角</span>
+            <span id="model-heading-value">80°</span>
+          </label>
+          <input type="range" id="slider-model-heading" min="0" max="360" step="1" value="80" />
+        </div>
+        <div class="slider-group">
+          <label class="slider-label">
+            <span>俯仰角</span>
+            <span id="model-pitch-value">120°</span>
+          </label>
+          <input type="range" id="slider-model-pitch" min="0" max="360" step="1" value="120" />
+        </div>
+        <div class="slider-group">
+          <label class="slider-label">
+            <span>翻滚角</span>
+            <span id="model-roll-value">10°</span>
+          </label>
+          <input type="range" id="slider-model-roll" min="-180" max="180" step="1" value="10" />
+        </div>
+        <div class="slider-group">
+          <label class="slider-label">
+            <span>缩放</span>
+            <span id="model-scale-value">1.0</span>
+          </label>
+          <input type="range" id="slider-model-scale" min="0.1" max="5" step="0.1" value="1.0" />
+        </div>
+        <div class="slider-group">
+          <label class="slider-label">
+            <span>高度</span>
+            <span id="model-height-value">2m</span>
+          </label>
+          <input type="range" id="slider-model-height" min="-20" max="100" step="1" value="2" />
+        </div>
+        <div class="model-offset-controls">
+          <div class="slider-group">
+            <label class="slider-label">
+              <span>东移</span>
+              <span id="model-east-value">0m</span>
+            </label>
+            <input type="range" id="slider-model-east" min="-500" max="500" step="1" value="0" />
+          </div>
+          <div class="slider-group">
+            <label class="slider-label">
+              <span>北移</span>
+              <span id="model-north-value">0m</span>
+            </label>
+            <input type="range" id="slider-model-north" min="-500" max="500" step="1" value="0" />
+          </div>
+        </div>
+        <div class="model-btn-row">
+          <button id="btn-reset-model" class="tool-btn-sm" style="background:var(--text-dim)">↺ 重置</button>
+          <button id="btn-save-model" class="tool-btn-sm" style="background:var(--accent-green)">💾 保存参数</button>
+        </div>
+      </section>
+
+      <!-- 预设视角 -->
+      <section class="panel-section">
+        <h3 class="section-title">📍 预设视角</h3>
+        <div class="view-grid">
+          <button class="view-btn" data-view="china">🇨🇳 全国</button>
+          <button class="view-btn" data-view="north">🏛️ 华北</button>
+          <button class="view-btn" data-view="east">🏙️ 华东</button>
+          <button class="view-btn" data-view="south">🌴 华南</button>
+          <button class="view-btn" data-view="west">⛰️ 西部</button>
+          <button class="view-btn" data-view="default">🌍 初始</button>
+        </div>
+      </section>
+
+      <!-- 视角管理 -->
+      <section class="panel-section">
+        <h3 class="section-title">📍 视角管理</h3>
+        <div class="view-save-group">
+          <input type="text" id="input-view-name" class="view-name-input" placeholder="输入视角名称" />
+          <button id="btn-save-view" class="tool-btn-sm">💾 保存</button>
+        </div>
+        <div id="view-list" class="view-list">
+          <!-- 视角列表会动态生成 -->
+        </div>
+      </section>
+
+      <!-- 工具 -->
+      <section class="panel-section">
+        <h3 class="section-title">🔧 工具</h3>
+        <button id="btn-fly-model" class="tool-btn">🎯 飞到模型</button>
+        <button id="btn-screenshot" class="tool-btn">📷 导出截图</button>
+      </section>
+    </aside>
+
+    <!-- 3D 视口 -->
+    <div id="viewer-container"></div>
+  </div>
+
+  <!-- 底部状态栏 -->
+  <footer id="status-bar">
+    <span id="status-coords">坐标: —</span>
+    <span id="status-camera">视角: —</span>
+  </footer>
+
+  <!-- Cesium 基础路径（必须在 Cesium.js 之前加载） -->
+  <script>
+    // 开发环境使用根路径，生产环境通过 Vite 插件注入正确路径
+    window.CESIUM_BASE_URL = '/Cesium/';
+  </script>
+
+  <!-- Cesium 核心库 -->
+  <script src="/Cesium/Cesium.js"></script>
+
+  <!-- 应用入口 -->
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

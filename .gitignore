@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Cesium static assets (copied from node_modules during install)
+public/Cesium/
+
+# 模型文件（太大，不上传）
+public/models/
+
+# Temporary files
+tmp-*.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+npm-debug.log*
